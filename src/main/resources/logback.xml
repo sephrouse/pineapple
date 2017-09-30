@@ -1,0 +1,33 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+    <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>
+    </encoder>
+    </appender>
+
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>e:\\test.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>e:\\test-%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <MaxHistory>10</MaxHistory>
+            <MaxFileSize>5MB</MaxFileSize>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="io.netty" level="warn"/>
+    <logger name="io.vertx" level="info"/>
+
+    <root level="debug">
+        <level value="debug"></level>
+        <level value="warn"></level>
+        <level value="error"></level>
+        <level value="info"></level>
+        <level value="trace"></level>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="file"/>
+    </root>
+</configuration>

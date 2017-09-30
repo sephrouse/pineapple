@@ -1,0 +1,6 @@
+{
+  "http.port": 7878,
+  "service.instance": 2,
+  "db.instance": 1,
+  "db.url": "DDDDDBBBBBUUUUURRRRRLLLLL"
+}

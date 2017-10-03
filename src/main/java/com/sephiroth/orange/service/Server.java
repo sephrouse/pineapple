@@ -2,6 +2,10 @@ package com.sephiroth.orange.service;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
+import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
+import io.vertx.core.spi.cluster.ClusterManager;
+import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,18 +17,32 @@ public class Server extends AbstractVerticle{
     public void start() {
         LOGGER.debug("service instance is " + config().getInteger("service.instance"));
 
-        DeploymentOptions webServiceVerticleOpt = new DeploymentOptions().setConfig(config()).setInstances(config().getInteger("service.instance", 2));
+        ClusterManager mgr = new HazelcastClusterManager();
 
-        vertx.deployVerticle("com.sephiroth.orange.service.web.WebServiceVerticle", webServiceVerticleOpt, res -> {
-            if(res.succeeded()) {
-                System.out.println("deployment id is " + res.result());
-                LOGGER.info("end of Server start." + Thread.currentThread().getName());
-                printProjectName();
+        VertxOptions opt = new VertxOptions().setClusterManager(mgr);
+
+        Vertx.clusteredVertx(opt, res -> {
+            if (res.succeeded()) {
+                Vertx vertx = res.result();
+
+                DeploymentOptions webServiceVerticleOpt = new DeploymentOptions().setConfig(config()).setInstances(config().getInteger("service.instance", 2));
+
+                vertx.deployVerticle("com.sephiroth.orange.service.web.WebServiceVerticle", webServiceVerticleOpt, res1 -> {
+                    if(res1.succeeded()) {
+                        System.out.println("deployment id is " + res1.result());
+                        LOGGER.info("end of Server start." + Thread.currentThread().getName());
+                        printProjectName();
+                    }else{
+                        System.out.println("failed to deploy " + res1.cause());
+                        vertx.close();
+                    }
+                });
+
             }else{
-                System.out.println("failed to deploy " + res.cause());
                 vertx.close();
             }
         });
+
 
     }
 

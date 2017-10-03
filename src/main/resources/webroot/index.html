@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SockJS</title>
+    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/sockjs/0.3.4/sockjs.min.js"></script>
+    <script type="text/javascript">
+        var sock = new SockJS('http://localhost:7878/myapp');
+
+        sock.onopen = function() {
+            console.log('open orange');
+        };
+
+        sock.onmessage = function(e) {
+            console.log('message what', e.data);
+        };
+
+        sock.onclose = function() {
+            console.log('close orange');
+            alert('close socket.');
+        };
+
+    </script>
+</head>
+<body>
+2323
+<button id="testSockJS" type="button">test</button>
+
+</body>
+
+<script type="text/javascript">
+    $("#testSockJS").click(function() {
+        //alert('test button');
+        sock.send('ha ha ha');
+    });
+</script>
+
+</html>
